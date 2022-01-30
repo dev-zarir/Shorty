@@ -1,0 +1,163 @@
+{% extends 'base.html' %}
+{% block title %}URL Info - Shorty{% endblock%}
+{% block tools %}active{% endblock%}
+{% block width %}500{% endblock%}
+{% block url %}active{% endblock%}
+{% block size %}none{% endblock %}
+{% block content %}
+<h1 class="text-center">URL Info</h1>
+</div>
+
+<div align="left" id="urlcard" class="container card shadow bg-body rounded my-2">
+    <div style="float: right;">
+        <div class="card" style="width: 130px;height: 30px;position: absolute;top: -30px;left: -0px;">
+          <div class="card-body">
+            <p class="card-title" style="position: relative;top: -15px;">
+              {{ url.clicks }} Clicks
+            </p>
+          </div>
+        </div>
+      </div>
+    <div class="card-body">
+      <p class="card-text longlink">
+        Original link:
+        <a id="alongurl" href="{{ url.longurl }}" target="_blank">
+          {% if request.MOBILE %}
+          {{ url.longurl | truncate(25, True, '...') }}
+          {% else %}
+          {{ url.longurl | truncate(50, True, '...') }}
+          {% endif %}
+        </a>
+      </p>
+      <hr class="divider"/>
+      <p class="card-text shortlink">
+        <a id="shorturl" href="{{ request.root_url }}{{ url.shorturl }}" target="_blank">
+          {% if request.MOBILE %}
+          {{ request.root_url }}{{ url.shorturl | truncate(12, True, '...') }}
+          {% else %}
+          {{ request.root_url }}{{ url.shorturl | truncate(50, True, '...') }}
+          {% endif %}
+        </a>
+      </p>
+      <div class="card-text actionbtns" style="font-size: 31px;word-spacing: 10px;float: left;">
+        <div class="tip">
+          <a onclick="copybyindex('')" type="button" class="bi bi-clipboard no-dec" id="copybtn"></a>
+          <a style="color: green;display: none;" class="bi bi-clipboard-check no-dec" id="check-copybtn"></a>
+        <span style="width: 50px;margin-left: -25px;" class="tiptext">Copy</span></div>
+        <div class="tip">
+          <a type="button" href="{{ url.longurl }}" target="_blank" style="position: relative;top: -1px;" class="bi bi-box-arrow-up-right no-dec"></a>
+        <span style="width: 130px;margin-left: -65px;" class="tiptext">Open in new tab</span></div>
+        <div class="tip">
+          <a type="button" data-bs-toggle="modal" data-bs-target="#editurl" class="bi bi-pencil-square no-dec"></a>
+        <span style="width: 40px;margin-left: -20px;" class="tiptext">Edit</span></div>
+        <div class="tip">
+          <a type="button"  data-bs-toggle="modal" data-bs-target="#deleteurl" class="bi bi-trash no-dec"></a>
+        <span style="width: 60px;margin-left: -30px;" class="tiptext">Delete</span></div>
+      </div>
+    </div>
+  </div>
+  <!-- URL Edit Modal -->
+  <div class="modal fade" id="editurl" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Edit your URL</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div id="editalert"></div>
+        <!-- BODY -->
+        <div class="form-floating mb-3">
+  <input type="url" class="form-control" value="{{ url.longurl }}" id="longurl" placeholder="Long URL">
+  <label for="longurl">Long URL</label>
+</div>
+<div class="form-floating">
+  <input type="text" class="form-control" value="{{ url.shorturl }}" id="name" placeholder="Alias/Name">
+  <label for="name">Alias/Name</label>
+</div>
+        <!-- BODY END -->
+      </div>
+      <div class="modal-footer">
+        <button type="button" id="urlclosebtn" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" onclick="editurl({{ url.id }}, '')" id="savebtn" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Delete Modal -->
+  <div class="modal fade" id="deleteurl" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Delete your URL</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div id="deletealert"></div>
+        <!-- BODY -->
+        <p align="left">Are you sure? You are gonna delete this short URL</p>
+        <!-- BODY END -->
+      </div>
+      <div class="modal-footer">
+        <button type="button" id="closebtn" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" onclick="deleteurl({{ url.id }}, '')" id="deletebtn" class="btn btn-danger">Delete</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- TABLE -->
+{% if url.clicks==0 %}
+<div class="alert alert-danger my-5 fade show alert-dismissible d-flex align-items-center" role="alert">
+        <svg aria-label="Danger:" class="bi flex-shrink-0 me-2" height="24" role="img" width="24">
+          <use xlink:href="#exclamation-triangle-fill">
+          </use>
+        </svg>
+        <div>
+          This URL has no victims
+          <button aria-label="Close" class="btn-close" data-bs-dismiss="alert" type="button">
+          </button>
+        </div>
+      </div>
+{% else %}
+<div class="container card shadow bg-body rounded my-5 table-responsive">
+  <div class="card-body">
+<table class="table table-hover table-bordered">
+  <thead>
+    <tr>
+      <th scope="col">IP Address</th>
+      <th scope="col">Date</th>
+      <th scope="col">Time</th>
+      <th scope="col">Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for data in urlinfo.items %}
+    <tr>
+      <td>{{ data.ip }}</td>
+      <td>{{ getdate(data.time) }}</td>
+      <td>{{ gettime(data.time) }}</td>
+      <td><button onclick="getipinfo('{{ data.ip }}')" class="btn btn-primary">Get IP Location</button></td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+<nav style="margin-top: 30px;">
+    <ul class="pagination justify-content-center">
+      <li class="page-item {% if not urlinfo.has_prev %}disabled{% endif %}"><a class="page-link" href=".?page={{urlinfo.prev_num}}">Previous</a></li>
+  {% for num in urlinfo.iter_pages(left_edge=2, right_edge=2, left_current=1, right_current=2) %}
+  {% if num %}
+    <li class="page-item {% if urlinfo.page==num %}active{% endif %}"><a class="page-link" href=".?page={{num}}">{{ num }}</a></li>
+  {% else %}
+  ...
+  {% endif %}
+  {% endfor %}
+      <li class="page-item {% if not urlinfo.has_next %}disabled{% endif %}"><a class="page-link" href=".?page={{urlinfo.next_num}}">Next</a></li>
+    </ul>
+  </nav>
+</div>
+</div>
+{% endif %}
+
+<div style="height: 500px;">
+</div>
+{% endblock %}

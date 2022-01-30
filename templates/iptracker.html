@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+{% block title %}IP Tracker - Shorty{% endblock%}
+{% block ip %}active{% endblock%}
+{% block url %}active{% endblock%}
+{% block size %}none{% endblock %}
+{% block content %}
+<h1 class="text-center">IP Tracker</h1>
+<div align="center" id="ipinput" style="display: block;">
+  <form onsubmit="return false">
+    <div class="card responsive shadow my-4">
+      <div class="card-body">
+        <div class="form-floating mb-3">
+          <input class="form-control" value="{{ ipaddress }}" id="ip" placeholder="IP Address" type="ip">
+          <label for="longurl">
+          IP Address
+          </label>
+          </input>
+        </div>
+        <button class="btn btn-primary" id="submitbtn" onclick="trackip()" type="submit">
+        Submit
+        </button>
+      </div>
+    </div>
+  </form>
+</div>
+<!-- IP Result -->
+<div align="center" id="ipresult" style="display: none;">
+  <form onsubmit="return false">
+    <div class="card responsive shadow my-4 table-responsive">
+      <div class="card-body">
+        <div align="left">
+        <table class="table table-borderless">
+          <tr>
+            <td>Country:</td>
+            <td id="country"></td>
+          </tr>
+          <tr>
+            <td>Country Code:</td>
+            <td id="countryCode"></td>
+          </tr>
+          <tr>
+            <td>Region:</td>
+            <td id="region"></td>
+          </tr>
+          <tr>
+            <td>Region Name:</td>
+            <td id="regionName"></td>
+          </tr>
+          <tr>
+            <td>City:</td>
+            <td id="city"></td>
+          </tr>
+          <tr>
+            <td>Zip Code:</td>
+            <td id="zip"></td>
+          </tr>
+          <tr>
+            <td>Latitude:</td>
+            <td id="lat"></td>
+          </tr>
+          <tr>
+            <td>Longitude:</td>
+            <td id="lon"></td>
+          </tr>
+          <tr>
+            <td>Time Zone:</td>
+            <td id="timezone"></td>
+          </tr>
+          <tr>
+            <td>ISP:</td>
+            <td id="isp"></td>
+          </tr>
+          
+        </table>
+        </div>
+        <button class="btn btn-primary" id="backbtn" onclick="showiptracker()" type="submit">
+        Track Another
+        </button>
+      </div>
+    </div>
+  </form>
+</div>
+<div style="height: 500px;"></div>
+{% endblock %}
+{% block footer %}
+<script type="text/javascript">
+var url_string = window.location.href
+var url = new URL(url_string);
+var submit = url.searchParams.get("submit");
+if (submit == 'true') {document.getElementById('submitbtn').click()}
+</script>
+{% endblock %}

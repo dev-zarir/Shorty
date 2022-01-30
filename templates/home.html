@@ -1,0 +1,58 @@
+{% if user.is_authenticated %}
+<meta content="0; url='{{url_for('views.dashboard')}}'" http-equiv="Refresh"/>
+{% else %}
+{% extends 'base.html' %}
+{% block title %}Shorty - Make your URL Shorter{% endblock%}
+{% block home %}active{% endblock%}
+{% block size %}90{% endblock %}
+{% block content %}
+<h1 class="text-center">
+  Shorten your URL!
+</h1>
+<form id="form-shorturl" onsubmit="return false" style="display: block;">
+  <div align="center" class="p-3">
+    <div class="card shadow bg-body rounded responsive" style="height: 200px;">
+      <div class="card-body">
+        <div class="input-group flex-nowrap mb-3">
+          <input class="form-control" id="longurl" name="longurl" placeholder="Long URL" required="" style="height: 50px;border-radius: 10px;" type="url">
+          </input>
+        </div>
+        <div class="input-group flex-nowrap">
+          <input class="form-control" id="name" name="name" placeholder="Alias/Name (Optional)" style="height: 50px;border-radius: 10px;" type="text">
+          </input>
+        </div>
+        <button class="btn btn-primary my-2" id="submitbtn" onclick="shorturl()" style="font-size: 20px;" type="submit">
+          Submit
+        </button>
+      </div>
+    </div>
+  </div>
+</form>
+<!-- Show Shorten URL -->
+<form id="form-checkurl" onsubmit="return false" style="display: none;">
+  <div align="center">
+    <div class="card shadow bg-body rounded responsive" style="height: 140px;">
+      <div class="card-body">
+        <div class="input-group flex-nowrap mb-3">
+          <input class="form-control" id="shorturl" placeholder="Short URL" readonly="" required="" style="height: 50px;background: white;border-radius: 10px;" type="url" value="https://google.com">
+          </input>
+          <button class="copybtn">
+            <a id="copy" onclick="copyurl()" style="font-size: 30px;color: #0062ff">
+              <i class="bi bi-clipboard">
+              </i>
+            </a>
+            <a id="copy-check" onclick="copyurl()" style="font-size: 30px;color: green;display: none;">
+              <i class="bi bi-clipboard-check">
+              </i>
+            </a>
+          </button>
+        </div>
+        <button class="btn btn-primary btn-center" onclick="showshorturlform()" style="font-size: 18px;margin-top: 10px;" type="submit">
+          Short another
+        </button>
+      </div>
+    </div>
+  </div>
+</form>
+{% endblock %}
+{% endif %}

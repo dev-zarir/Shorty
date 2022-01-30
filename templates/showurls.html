@@ -1,0 +1,147 @@
+{% extends 'base.html' %}
+{% block title %}Your URLs - Shorty{% endblock%}
+{% block tools %}active{% endblock%}
+{% block width %}500{% endblock%}
+{% block urls %}active{% endblock%}
+{% block size %}none{% endblock %}
+{% block content %}
+<h1 class="text-center">
+  Your URLs
+</h1>
+<p class="text-center text-secondary">
+  You have total {{ user.total_url }} URLs
+</p>
+<div align="center">
+  {% if user.total_url==0 %}
+  <div class="alert alert-warning fade show alert-dismissible d-flex align-items-center" role="alert">
+    <svg aria-label="Warning:" class="bi flex-shrink-0 me-2" height="24" role="img" width="24">
+      <use xlink:href="#exclamation-triangle-fill">
+      </use>
+    </svg>
+    <div>
+      You have no urls. Try creating some!
+    </div>
+  </div>
+  {% endif %}
+  {% for info in urls.items %}
+  <div id="urlcard{{ loop.index }}" class="card shadow bg-body rounded responsive my-5">
+    <div style="float: right;">
+        <div class="card" style="width: 130px;height: 30px;position: absolute;top: -30px;">
+          <div class="card-body">
+            <p class="card-title" style="position: relative;top: -15px;">
+              {{ info.clicks }} Clicks
+            </p>
+          </div>
+        </div>
+      </div>
+    <div align="left" class="card-body">
+      <p class="card-text longlink">
+        Original link:
+        <a id="alongurl{{ loop.index }}" href="{{ info.longurl }}" target="_blank">
+          {% if request.MOBILE %}
+          {{ info.longurl | truncate(25, True, '...') }}
+          {% else %}
+          {{ info.longurl | truncate(40, True, '...') }}
+          {% endif %}
+        </a>
+      </p>
+      <hr class="divider"/>
+      <p class="card-text shortlink">
+        <a id="shorturl{{ loop.index }}" href="{{ request.root_url }}{{ info.shorturl }}" target="_blank">
+          {% if request.MOBILE %}
+          {{ request.root_url }}{{ info.shorturl | truncate(12, True, '...') }}
+          {% else %}
+          {{ request.root_url }}{{ info.shorturl | truncate(30, True, '...') }}
+          {% endif %}
+        </a>
+      </p>
+      <div class="card-text actionbtns" style="font-size: 31px;word-spacing: 10px;float: left;">
+        <div class="tip">
+          <a onclick="copybyindex({{ loop.index }})" type="button" class="bi bi-clipboard no-dec" id="copybtn{{ loop.index }}"></a>
+          <a style="color: green;display: none;" class="bi bi-clipboard-check no-dec" id="check-copybtn{{ loop.index }}"></a>
+        <span style="width: 50px;margin-left: -25px;" class="tiptext">Copy</span></div>
+        <div class="tip">
+          <a type="button" href="{{ info.longurl }}" target="_blank" style="position: relative;top: -1px;" class="bi bi-box-arrow-up-right no-dec"></a>
+        <span style="width: 130px;margin-left: -65px;" class="tiptext">Open in new tab</span></div>
+        <div class="tip">
+          <a type="button" data-bs-toggle="modal" data-bs-target="#editurl{{ loop.index }}" class="bi bi-pencil-square no-dec"></a>
+        <span style="width: 40px;margin-left: -20px;" class="tiptext">Edit</span></div>
+        <div class="tip">
+          <a type="button"  data-bs-toggle="modal" data-bs-target="#deleteurl{{ loop.index }}" class="bi bi-trash no-dec"></a>
+        <span style="width: 60px;margin-left: -30px;" class="tiptext">Delete</span></div>
+        <div class="tip">
+          <a href="/urls/{{ info.shorturl }}" type="button" class="bi bi-people no-dec"></a>
+        <span style="width: 100px;margin-left: -50px;" class="tiptext">View victims</span></div>
+      </div>
+    </div>
+  </div>
+  <!-- URL Edit Modal -->
+  <div class="modal fade" id="editurl{{ loop.index }}" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Edit your URL</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div id="editalert{{ loop.index }}"></div>
+        <!-- BODY -->
+        <div class="form-floating mb-3">
+  <input type="url" class="form-control" value="{{ info.longurl }}" id="longurl{{ loop.index }}" placeholder="Long URL">
+  <label for="longurl">Long URL</label>
+</div>
+<div class="form-floating">
+  <input type="text" class="form-control" value="{{ info.shorturl }}" id="name{{ loop.index }}" placeholder="Alias/Name">
+  <label for="name">Alias/Name</label>
+</div>
+        <!-- BODY END -->
+      </div>
+      <div class="modal-footer">
+        <button type="button" id="urlclosebtn{{ loop.index }}" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" onclick="editurl({{ info.id }}, {{ loop.index }})" id="savebtn{{ loop.index }}" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Delete Modal -->
+  <div class="modal fade" id="deleteurl{{ loop.index }}" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Delete your URL</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div id="deletealert{{ loop.index }}"></div>
+        <!-- BODY -->
+        <p align="left">Are you sure? You are gonna delete this short URL</p>
+        <!-- BODY END -->
+      </div>
+      <div class="modal-footer">
+        <button type="button" id="closebtn{{ loop.index }}" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" onclick="deleteurl({{ info.id }}, {{ loop.index }})" id="deletebtn{{ loop.index }}" class="btn btn-danger">Delete</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+  {% endfor %}
+  {% if not user.total_url==0 %}
+  <nav>
+    <ul class="pagination justify-content-center">
+      <li class="page-item {% if not urls.has_prev %}disabled{% endif %}"><a class="page-link" href="{{url_for('views.urllist', page=urls.prev_num)}}">Previous</a></li>
+  {% for num in urls.iter_pages(left_edge=2, right_edge=2, left_current=1, right_current=2) %}
+  {% if num %}
+    <li class="page-item {% if urls.page==num %}active{% endif %}"><a class="page-link" href="{{url_for('views.urllist', page=num)}}">{{ num }}</a></li>
+  {% else %}
+  ...
+  {% endif %}
+  {% endfor %}
+      <li class="page-item {% if not urls.has_next %}disabled{% endif %}"><a class="page-link" href="{{url_for('views.urllist', page=urls.next_num)}}">Next</a></li>
+    </ul>
+  </nav>
+{% endif %}
+</div>
+<div style="height: 300px;">
+</div>
+{% endblock %}

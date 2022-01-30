@@ -1,0 +1,113 @@
+button {
+    box-shadow: none!important
+}
+a {
+    box-shadow: none!important
+}
+.center {
+    position: absolute;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    margin-top: 30px;
+}
+.copybtn {
+    background: transparent;
+    border: none;
+    outline: none;
+    right: 10px;
+}
+.btn-center {
+    margin: 0 auto;
+    display: block;
+}
+.div-center {
+    display: flex;
+    justify-content: center;
+}
+.no-dec {
+    text-decoration: none;
+    color: black;
+}
+.no-dec:hover {
+    text-decoration: none;
+    color: black;
+}
+.disable-select {
+    user-select: none;
+    /* supported by Chrome and Opera */
+    -webkit-user-select: none;
+    /* Safari */
+    -khtml-user-select: none;
+    /* Konqueror HTML */
+    -moz-user-select: none;
+    /* Firefox */
+    -ms-user-select: none;
+    /* Internet Explorer/Edge */
+}
+.shortlink a {
+    text-decoration: none;
+    color: #3b3bff;
+    font-size: 19px;
+}
+.shortlink a:hover {
+    text-decoration: none;
+    color: #ff5252;
+}
+.longlink a {
+    text-decoration: none;
+    color: #545454;
+}
+.longlink a:hover {
+    text-decoration: none;
+    color: #262626;
+}
+.actionbtns a {
+    font-size: 25px;
+    margin-top: 10px;
+    color: black;
+    transition: 0.3s;
+}
+.actionbtns a:hover {
+    color: blue;
+    font-size: 28px;
+}
+/* Tooltip CSS START*/
+
+.tip {
+    position: relative;
+    display: inline-block;
+}
+.tip .tiptext {
+    font-size: 15px;
+    word-spacing: 0.5px;
+    opacity: 0;
+    transition: opacity 0.5s;
+    transition-delay: 0.3s;
+    width: 120px;
+    bottom: 100%;
+    left: 50%;
+    margin-left: -60px;
+    visibility: hidden;
+    background-color: black;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px 0;
+    position: absolute;
+    z-index: 1;
+}
+.tip:hover .tiptext {
+    opacity: 1;
+    visibility: visible;
+}
+.tip .tiptext::after {
+    content: " ";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: black transparent transparent transparent;
+}
+/* Tooltip CSS END */

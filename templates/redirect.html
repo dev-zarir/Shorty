@@ -1,0 +1,39 @@
+<script type="text/javascript">
+	var host = window.location.protocol + "//" + window.location.host;
+	getip=new XMLHttpRequest()
+	getip.open('GET', 'https://api.ipify.org')
+	getip.onload=()=>{
+		if (getip.status==200) {
+			ipaddress=getip.responseText
+			xhr=new XMLHttpRequest()
+			xhr.open('POST', host+'/api/redirect')
+			xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+			xhr.onload=()=>{
+				if (xhr.status==200) {
+					text=JSON.parse(xhr.responseText)
+					if (text['success']==true) {
+						longurl=text['longurl']
+						window.location.replace(longurl)
+					} else {
+						window.location.reload()
+					}
+				} else {
+					window.location.reload()
+				}
+			}
+			xhr.onerror=()=>{
+				window.location.reload()
+			}
+			data=`url={{shorturl}}&ip=${ipaddress}`
+			xhr.send(data)
+		} else {
+			window.location.reload()
+		}
+	}
+	getip.onerror=()=>{
+		window.location.reload()
+	}
+	getip.send()
+</script>
+<title>You are being redirected...</title>
+<div align="center">You are being redirected...</div>

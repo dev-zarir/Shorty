@@ -1,0 +1,148 @@
+{% if not request.MOBILE %}
+<style type="text/css">
+  .responsive{
+    width: {% block width %}500{% endblock %}px;
+  }
+</style>
+{% endif %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+      <meta content="width=device-width, initial-scale=1" name="viewport">
+        <link crossorigin="anonymous" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" rel="stylesheet">
+          <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css" rel="stylesheet">
+            <link href="{{url_for('static', filename='css/main.css')}}" rel="stylesheet" type="text/css">
+              <title>
+                {% block title%}{% endblock %}
+              </title>
+            </link>
+          </link>
+        </link>
+      </meta>
+    </meta>
+  </head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-dark sticky-top bg-dark">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="{% if user.is_authenticated %}{{ request.url_root }}dashboard{% else %}{{ request.url_root }}{% endif %}" style="font-size: 25px;">
+        Shorty
+      </a>
+      <button aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation" class="navbar-toggler" data-bs-target="#navbarNavAltMarkup" data-bs-toggle="collapse" type="button">
+        <span class="navbar-toggler-icon">
+        </span>
+      </button>
+      <div class="collapse navbar-collapse justify-content-end" id="navbarNavAltMarkup">
+        <div class="navbar-nav">
+          {% if user.is_authenticated %}
+          <a aria-current="page" class="nav-link disable-select {% block dashboard %}{% endblock %}" href="{{ request.url_root }}dashboard">Dashboard</a>
+
+          <li class="nav-item dropdown bg-dark">
+          <a class="nav-link disable-select dropdown-toggle disable-select {% block tools %}{% endblock %}" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Tools
+          </a>
+          <ul class="dropdown-menu dropdown-menu-dark {% block urls %}{% endblock %}" aria-labelledby="navbarDropdown">
+            <li><a class="dropdown-item disable-select" href="{{ url_for('views.urllist') }}">Your URLs</a></li>
+            <!-- <li><hr class="dropdown-divider disable-select"></li> -->
+          </ul>
+        </li>
+
+          <a aria-current="page" class="nav-link disable-select" href="{{ request.url_root }}logout">
+            Logout
+          </a>
+          {% else %}
+          <a aria-current="page" class="nav-link disable-select {% block home %}{% endblock %}" href="{{ request.url_root }}">
+            Home
+          </a>
+          <a aria-current="page" class="nav-link disable-select {% block login %}{% endblock %}" href="{{ request.url_root }}login">
+            Login
+          </a>
+          <a aria-current="page" class="nav-link disable-select {% block register %}{% endblock %}" href="{{ request.url_root }}register">
+            Register
+          </a>
+          {% endif %}
+          <a aria-current="page" class="nav-link disable-select {% block ip %}{% endblock %}" href="{{ request.url_root }}iptracker">
+            IP Tracker
+          </a>
+        </div>
+      </div>
+    </div>
+  </nav>
+  <div class="container my-4" style="height: {% block size %}{% endblock %}vh">
+    <svg style="display: none;" xmlns="http://www.w3.org/2000/svg">
+      <symbol fill="currentColor" id="check-circle-fill" viewbox="0 0 16 16">
+        <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z">
+        </path>
+      </symbol>
+      <symbol fill="currentColor" id="exclamation-triangle-fill" viewbox="0 0 16 16">
+        <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z">
+        </path>
+      </symbol>
+    </svg>
+    <div id="alertmsg">
+      {%with messages=get_flashed_messages(with_categories=true)%}
+    {%if messages%}
+      {%for category, message in messages%}
+        {%if category=='error'%}
+      <div class="alert alert-danger fade show alert-dismissible d-flex align-items-center" role="alert">
+        <svg aria-label="Danger:" class="bi flex-shrink-0 me-2" height="24" role="img" width="24">
+          <use xlink:href="#exclamation-triangle-fill">
+          </use>
+        </svg>
+        <div>
+          {{message}}
+          <button aria-label="Close" class="btn-close" data-bs-dismiss="alert" type="button">
+          </button>
+        </div>
+      </div>
+      {%endif%}
+      {%if category=='warning'%}
+      <div class="alert alert-warning fade show alert-dismissible d-flex align-items-center" role="alert">
+        <svg aria-label="Warning:" class="bi flex-shrink-0 me-2" height="24" role="img" width="24">
+          <use xlink:href="#exclamation-triangle-fill">
+          </use>
+        </svg>
+        <div>
+          {{message}}
+          <button aria-label="Close" class="btn-close" data-bs-dismiss="alert" type="button">
+          </button>
+        </div>
+      </div>
+      {%endif%}
+        {%if category=='success'%}
+      <div class="alert alert-success fade show alert-dismissible d-flex align-items-center" role="alert">
+        <svg aria-label="Success:" class="bi flex-shrink-0 me-2" height="24" role="img" width="24">
+          <use xlink:href="#check-circle-fill">
+          </use>
+        </svg>
+        <div>
+          {{message}}
+          <button aria-label="Close" class="btn-close" data-bs-dismiss="alert" type="button">
+          </button>
+        </div>
+      </div>
+      {%endif%}
+      {%endfor%}
+    {%endif%}
+  {%endwith%}
+    </div>
+    <div class="container">
+    {% block content%}{% endblock %}
+    </div>
+  </div>
+</body>
+<footer style="bottom: 0px;">
+  <div class="footer-copyright text-center py-3" style="background-color: #1a1a1a;color: #e6e6e6">
+    © 2022
+    <a href="{{ request.url_root }}" style="text-decoration: none;color: white;">
+      Shorty
+    </a>
+    All rights reserved
+  </div>
+  <script crossorigin="anonymous" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js">
+  </script>
+  <script src="{{url_for('static', filename='js/main.js')}}" type="text/javascript">
+  </script>
+  {% block footer %}{% endblock %}
+</footer>
+</html>
